@@ -1,4 +1,4 @@
-from user_interface import UserInterface
+from src.user_interface import UserInterface
 
 
 def main():
