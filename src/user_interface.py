@@ -1,3 +1,6 @@
+from src.encoder import CaesarEncryptor
+
+
 class InvalidOption(Exception):
     def __init__(self, invalid_option: str):
         self.invalid_option = invalid_option
@@ -15,39 +18,39 @@ class UserInterface:
         Rhe final module will be responsible for loading and saving
         data as json files (3 classes total)
         """
+        self.__is_running = True
+        self.choices = {"1": self._encrypt_message, "0": self._quit}
+        self._initialize()
 
-    def show_menu(self):
-        is_running = True
-        while is_running:
-            print(
-                "Main menu\n"
-                "Choose one of the options\n"
-                "1. Encode your message\n"
-                "2. Decode your message\n"
-                "3. Write history of all operations\n"
-                "4. Load messages form json file\n"
-                "5. Save all operations to json file\n"
-                "0. Quit program"
-            )
+    def _initialize(self):
+        """loop"""
+        while self.__is_running:
+            self._show_menu()
             user_input = input("Choose one option:")
-            try:
-                is_running = self.process_user_input(user_input)
-            except InvalidOption as err:
-                print(err)
+            self._get_and_execute_choice(user_input)
 
-    def process_user_input(self, user_input):
-        match user_input:
-            case "1":
-                return True
-            case "2":
-                return True
-            case "3":
-                return True
-            case "4":
-                return True
-            case "5":
-                return True
-            case "0":
-                return False
-            case _:
-                raise InvalidOption(user_input)
+    @staticmethod
+    def _show_menu():
+        print(
+            """
+                ====================Main menu=======================
+                1. Encode your message
+                2. Decode your message
+                3. History of all operations
+                4. Load messages from json file
+                5. Save all operations to json file
+                0. Quit program
+                """
+        )
+
+    def _get_and_execute_choice(self, user_input):
+        self.choices.get(user_input)()
+
+    def _encrypt_message(self):
+        msg = input("Write a message, program will return the encoded version of it:\n")
+        shift = input("Shift by how many letter?:\n")
+        encoded_msg = CaesarEncryptor.encrypt_message(msg, shift)
+        print(encoded_msg)
+
+    def _quit(self):
+        self.__is_running = False
