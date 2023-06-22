@@ -1,4 +1,5 @@
 from src.encoder import CaesarEncryptor
+from src.history import History
 
 
 class InvalidOption(Exception):
@@ -22,8 +23,10 @@ class UserInterface:
         self.choices = {
             "1": self._encrypt_message,
             "2": self._decrypt_message,
+            "3": self._history_of_all_operations,
             "0": self._quit,
         }
+        self._history = History()
         self._initialize()
 
     def _initialize(self):
@@ -50,19 +53,30 @@ class UserInterface:
     def _get_and_execute_choice(self, user_input):
         self.choices.get(user_input)()
 
-    @staticmethod
-    def _encrypt_message():
+    def _encrypt_message(self):
         msg = input("Write a message, program will return the encoded version of it:\n")
         shift = input("Shift by how many letter?:\n")
         encoded_msg = CaesarEncryptor.encrypt_message(msg, shift)
+        self._history.save_operation("encryption", msg, shift, encoded_msg)
         print(encoded_msg)
 
-    @staticmethod
-    def _decrypt_message():
+    def _decrypt_message(self):
         msg = input("Write a message, program will return the encoded version of it:\n")
         shift = input("Shift by how many letter?:\n")
         encoded_msg = CaesarEncryptor.decrypt_message(msg, shift)
+        self._history.save_operation("decryption", msg, shift, encoded_msg)
         print(encoded_msg)
 
+    def _history_of_all_operations(self):
+        self._history.write_all_operations()
+
     def _quit(self):
+        print("Do you want to save history of all operations to file?")
+        user_choice = ""
+        while user_choice not in {"y", "n"}:
+            user_choice = input("Write 'y' if you want to save and 'n' if not")
+
+        if user_choice == "y":
+            self._history.save_to_file()
+
         self.__is_running = False
