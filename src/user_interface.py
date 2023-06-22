@@ -19,7 +19,11 @@ class UserInterface:
         data as json files (3 classes total)
         """
         self.__is_running = True
-        self.choices = {"1": self._encrypt_message, "0": self._quit}
+        self.choices = {
+            "1": self._encrypt_message,
+            "2": self._decrypt_message,
+            "0": self._quit,
+        }
         self._initialize()
 
     def _initialize(self):
@@ -46,10 +50,18 @@ class UserInterface:
     def _get_and_execute_choice(self, user_input):
         self.choices.get(user_input)()
 
-    def _encrypt_message(self):
+    @staticmethod
+    def _encrypt_message():
         msg = input("Write a message, program will return the encoded version of it:\n")
         shift = input("Shift by how many letter?:\n")
         encoded_msg = CaesarEncryptor.encrypt_message(msg, shift)
+        print(encoded_msg)
+
+    @staticmethod
+    def _decrypt_message():
+        msg = input("Write a message, program will return the encoded version of it:\n")
+        shift = input("Shift by how many letter?:\n")
+        encoded_msg = CaesarEncryptor.decrypt_message(msg, shift)
         print(encoded_msg)
 
     def _quit(self):

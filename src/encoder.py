@@ -8,28 +8,36 @@ class NonAsciiCharacter(Exception):
 
 class CaesarEncryptor:
     @staticmethod
-    def encode(char: str, shift: int) -> chr:
+    def encode(char: str, shift: str) -> chr:
         ascii_code = ord(char)
+        n_shift = int(shift)
 
         if ascii_code < 32 or ascii_code > 126:
             raise NonAsciiCharacter(char)
 
         if 64 < ascii_code < 91:
-            ascii_code = 65 + (ascii_code - 65 + shift) % 26
+            ascii_code = 65 + (ascii_code - 65 + n_shift) % 26
         elif 96 < ascii_code < 123:
-            ascii_code = 97 + (ascii_code - 97 + shift) % 26
+            ascii_code = 97 + (ascii_code - 97 + n_shift) % 26
 
         return chr(ascii_code)
 
     @staticmethod
     def encrypt_message(message: str, shift: str) -> str:
         try:
-            n_shift = int(shift)
             encrypted_message = "".join(
-                [CaesarEncryptor.encode(letter, n_shift) for letter in message]
+                [CaesarEncryptor.encode(letter, shift) for letter in message]
             )
             return encrypted_message
-        except NonAsciiCharacter:
-            return "There was a non ascii character in the given message!"
+        except NonAsciiCharacter as err:
+            return str(err)
         except ValueError:
             return "The shift has to be an integer!"
+
+    @staticmethod
+    def decrypt_message(message: str, shift: str) -> str:
+        if shift[0] == "-":
+            shift = shift[1:]
+        else:
+            shift = "-" + shift
+        return CaesarEncryptor.encrypt_message(message, shift)
