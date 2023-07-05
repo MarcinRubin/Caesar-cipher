@@ -1,3 +1,6 @@
+import sentry_sdk
+
+
 class NonAsciiCharacter(Exception):
     def __init__(self, invalid_character: str):
         self.invalid_character = invalid_character
@@ -30,8 +33,10 @@ class CaesarEncryptor:
             )
             return encrypted_message
         except NonAsciiCharacter as err:
+            sentry_sdk.capture_exception(err)
             return str(err)
-        except ValueError:
+        except ValueError as err:
+            sentry_sdk.capture_exception(err)
             return "The shift has to be an integer!"
 
     @staticmethod
