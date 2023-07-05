@@ -1,27 +1,66 @@
 import pytest
 
-from src.encoder import CaesarEncryptor, NonAsciiCharacter
+from src.encoder import CaesarEncryptor
 
 
-@pytest.mark.parametrize("non_ascii", ["ś", "ź", "ó", "ü", "ö", "ひ", "な", "â", "û"])
+@pytest.mark.parametrize(
+    "message, letter",
+    [
+        ("iść", "ś"),
+        ("gwizdać", "ć"),
+        ("żaba", "ż"),
+        ("ümlaut", "ü"),
+        ("öffnen", "ö"),
+        ("ひ", "ひ"),
+        ("な", "な"),
+        ("â", "â"),
+        ("û", "û"),
+    ],
+)
 def test_if_function_return_message_if_the_char_in_the_string_cannot_be_transformed_into_ascii(
-    mocker, non_ascii
+    message, letter
 ):
-    mocker.patch(
-        "src.encoder.CaesarEncryptor.encode", side_effect=NonAsciiCharacter(non_ascii)
-    )
-    message = "message"
-    assert (
-        CaesarEncryptor.encrypt_message(message, "3")
-        == f"The {non_ascii} cannot be transformed into ascii code!"
-    )
+    err_message = f"The {letter} cannot be transformed into ascii code!"
+    actual_message = CaesarEncryptor.encrypt_message(message, "3")
+    assert actual_message == err_message
 
 
-def test_should_return_appropriate_message_if_the_shift_is_not_a_valid_integer(mocker):
-    mocker.patch("src.encoder.CaesarEncryptor.encode", side_effect=ValueError)
-    message = "message"
-    shift = 0
-    assert (
-        CaesarEncryptor.encrypt_message(message, shift)
-        == "The shift has to be an integer!"
-    )
+@pytest.mark.parametrize(
+    "shift", ["zebra", ".01", "1.5gh", "999999.g", "2..56", "2.5.66"]
+)
+def test_should_return_appropriate_message_if_the_shift_is_not_a_valid_integer(shift):
+    message_to_encode = "message"
+    err_msg = "The shift has to be an integer!"
+    assert CaesarEncryptor.encrypt_message(message_to_encode, shift) == err_msg
+
+
+@pytest.mark.parametrize("shift", ["0", "6", "99999", "-99999", "1253635", "-23125356"])
+def test_should_return_an_empty_string_if_empty_string_is_provided_as_an_message_to_encode(
+    shift,
+):
+    message_to_encode = ""
+    assert CaesarEncryptor.encrypt_message(message_to_encode, shift) == ""
+
+
+@pytest.mark.parametrize(
+    "message_to_encode, shift, coded_message",
+    [
+        ("What can I Do?", "7", "Doha jhu P Kv?"),
+        ("I don't understand!", "-7", "B whg'm ngwxklmtgw!"),
+        (
+            "What if I shift beyond the alphabet?!",
+            "35",
+            "Fqjc ro R bqroc knhxwm cqn juyqjknc?!",
+        ),
+        ("Now, message is shifted by 0!", "0", "Now, message is shifted by 0!"),
+        (
+            "Beyond alphabet, but negative shifts!",
+            "-40",
+            "Nqkazp mxbtmnqf, ngf zqsmfuhq eturfe!",
+        ),
+    ],
+)
+def test_should_encode_the_given_message_properly_given_valid_message_and_valid_shift(
+    message_to_encode, shift, coded_message
+):
+    assert CaesarEncryptor.encrypt_message(message_to_encode, shift) == coded_message
