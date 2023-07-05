@@ -1,3 +1,4 @@
+import datetime
 import json
 
 
@@ -11,6 +12,7 @@ class History:
     ) -> None:
         new_record = {
             "operation_type": operation_type,
+            "time": datetime.datetime.now(),
             "message": message,
             "shift": shift,
             "result": result,
@@ -21,14 +23,15 @@ class History:
     def write_all_operations(self) -> None:
         if self.id == 0:
             print("No operations")
-        for i in self.previous_operations.items():
+        for idx, data in self.previous_operations.items():
             print(
                 f"""
-            Operation number: {i[0]}
-            Operation type: {i[1]['operation_type']}
-            Message to encode: {i[1]['message']}
-            Shifted by: {i[1]['shift']}
-            Result/Error: {i[1]['result']}
+            Operation number: {idx}
+            Operation type: {data['operation_type']}
+            Date: {data['time']}
+            Message to encode: {data['message']}
+            Shifted by: {data['shift']}
+            Result/Error: {data['result']}
             """
             )
 

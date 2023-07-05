@@ -48,4 +48,5 @@ def test_should_return_the_letter_that_is_shifted_from_the_given_letter_by_shift
 def test_should_return_the_letter_that_is_shifted_from_the_given_letter_by_shift_but_loop_to_the_beginning_after_reaching_z_or_to_a_after_reaching_z(
     letter, shift, result
 ):
-    assert CaesarEncryptor.encode(letter, shift) == result
+    actual_result = CaesarEncryptor.encode(letter, shift)
+    assert actual_result == result

@@ -1,0 +1,27 @@
+{
+  "0": {
+    "operation_type": "encrption",
+    "message": "First message to process.",
+    "shift": "g"
+  },
+  "1": {
+    "operation_type": "encryption",
+    "message": "Second message to process?",
+    "shift": "-10"
+  },
+  "2": {
+    "operation_type": "decryption",
+    "message": "Third message to process!",
+    "shift": "8"
+  },
+  "3": {
+    "operation_type": "decryption",
+    "message": "Fourth message to process>>",
+    "shift": "-8"
+  },
+  "4": {
+    "operation_type": "encryption",
+    "message": "What",
+    "shift": "3"
+  }
+}
