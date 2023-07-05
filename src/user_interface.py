@@ -1,5 +1,7 @@
 import json
 
+import sentry_sdk
+
 from src.encoder import CaesarEncryptor
 from src.history import History
 
@@ -64,6 +66,7 @@ class UserInterface:
         try:
             self.choices.get(user_input, self._invalid_input)()
         except InvalidOption as err:
+            sentry_sdk.capture_exception(err)
             print(err)
 
     def _encrypt_message(self):
@@ -98,6 +101,7 @@ class UserInterface:
                     raise EncoderModuleError(operation_type)
             except EncoderModuleError as err:
                 processed_msg = str(err)
+                sentry_sdk.capture_exception(err)
             finally:
                 print(processed_msg)
                 self._history.save_operation(
